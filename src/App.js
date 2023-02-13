@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { createWorker } from 'tesseract.js'
-import './App.css'
 import Textarea from './components/Textarea'
 import Results from './components/Results'
 
