@@ -1,24 +1,76 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from 'react'
+import { createWorker } from 'tesseract.js'
+import './App.css'
+import Textarea from './components/Textarea'
+import Results from './components/Results'
 
 function App() {
+  const [products, setProducts] = useState('')
+  const [results, setResults] = useState('')
+  const [copyMessage, setCopyMessage] = useState('')
+  const [imagePath, setImagePath] = useState('')
+
+  const handleImageUpload = (event) => {
+    setImagePath(URL.createObjectURL(event.target.files[0]))
+    console.log(event.target.files)
+  }
+
+  // create query string
+  useEffect(() => {
+    setCopyMessage('')
+    function createQuery() {
+      let results = ''
+      if(products) {
+        results = `"${products.split('\n')
+                              .map(e => e.trim())
+                              .filter(e => !['',' '].includes(e))
+                              .join('" OR "')
+                            }"`
+      }
+      results !== "\"\"" && setResults(`${results}`)
+    }
+
+    createQuery()
+  },[products])
+
+  // convert image to text on image upload
+  useEffect(() => {
+    const convertImageToText = async() => {
+      const worker = await createWorker({
+        logger: m => console.log(m)
+      })
+      await worker.loadLanguage('eng')
+      await worker.initialize('eng')
+      const { data: { text } } = await worker.recognize(imagePath)
+      await worker.terminate()
+      setProducts(text)
+    }
+    
+    imagePath && convertImageToText()
+  }, [imagePath])
+
+  // copy results to clipboard
+  const copyResults = () => {
+    results && navigator.clipboard.writeText(`${results}`)
+    results ? setCopyMessage(`Query copied`) : setCopyMessage(`Add some products`)
+  }
+
+  // clear products textarea
+  const clearProducts = () => {
+    setProducts('')
+    // needs to hold previous results and prevent loss when cleared
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className='flex flex-col lg:max-h-[100vh] max-w-[100vw] divide-y-[1px] divide-gray-100 lg:divide-y-0 lg:flex-row'>
+        <div className='flex flex-col space-y-10 lg:h-[100vh] lg:max-w-[400px] lg:w-[400px] lg:border-r-[1px] border-gray-100 px-8 lg:space-y-6'>
+          <h1 className='pt-8 text-2xl font-bold tracking-wide'>🔎 Product Search</h1>
+          <Textarea id='products' label='Enter your products below' value={products} onImageUpload={handleImageUpload} onProductChange={e => setProducts(e.target.value)}/>
+        </div>
+        <Results results={results} copyMessage={copyMessage} onClear={clearProducts} onCopy={copyResults} />
+      </div>
+    </>
   );
 }
 
