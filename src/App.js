@@ -64,7 +64,9 @@ function App() {
     <>
       <div className='flex flex-col lg:max-h-[100vh] max-w-[100vw] divide-y-[1px] divide-gray-100 lg:divide-y-0 lg:flex-row'>
         <div className='flex flex-col space-y-10 lg:h-[100vh] lg:max-w-[400px] lg:w-[400px] lg:border-r-[1px] border-gray-100 px-8 lg:space-y-6'>
-          <h1 className='pt-8 text-2xl font-bold tracking-wide'>🔎 Product Search</h1>
+          <div className='flex gap-2 mt-8'>
+              <span className='text-2xl'>🔎</span><h1 className='text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600'>Webdam Multi-Search</h1>
+          </div>
           <Textarea id='products' label='Enter your products below' value={products} onImageUpload={handleImageUpload} onProductChange={e => setProducts(e.target.value)}/>
         </div>
         <Results results={results} copyMessage={copyMessage} onClear={clearProducts} onCopy={copyResults} />
