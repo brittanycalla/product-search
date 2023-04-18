@@ -9,3 +9,13 @@
     font-family: 'DM Sans', monospace, system-ui, sans-serif;
   }
 }
+
+.fade-in {
+  opacity: 1;
+  transition: all 250ms linear;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: all 250ms linear 2s;
+}
