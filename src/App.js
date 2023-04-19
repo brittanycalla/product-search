@@ -17,8 +17,7 @@ function App() {
 
   // create query string
   useEffect(() => {
-    setCopyMessage('')
-    setIsShowingMessage(false)
+    fadeOutCopyMessage()
     function createQuery() {
       let results = ''
       if(products) {
@@ -61,6 +60,14 @@ function App() {
     }
   }
 
+  // fade out copy message
+  const fadeOutCopyMessage = () => {
+    setIsShowingMessage(false)
+    setTimeout(() => {
+      setCopyMessage('')
+    }, 1000)
+  }
+
   // clear products textarea
   const clearProducts = () => {
     setProducts('')
@@ -74,7 +81,7 @@ function App() {
           <div className='flex gap-2 mt-8'>
               <span className='text-2xl'>🔎</span><h1 className='text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600'>Webdam Multi-Search</h1>
           </div>
-          <Textarea id='products' label='Enter your products below' value={products} onImageUpload={handleImageUpload} onProductChange={e => setProducts(e.target.value)} />
+          <Textarea id='products' label='Enter your queries below' value={products} onImageUpload={handleImageUpload} onProductChange={e => setProducts(e.target.value)} />
         </div>
         <Results results={results} copyMessage={copyMessage} isShowingMessage={isShowingMessage} onClear={clearProducts} onCopy={copyResults} />
       </div>
